@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <form action="" class="karlo_wrap">
+        <div>
+            <label for="inp1">프롬프트 입력</label>
+            <input type="text" id="inp1" placeholder="필수">
+        </div>
+        <div>
+            <label for="inp2">제외 단어 입력</label>
+            <input type="text" id="inp2" placeholder="선택">
+        </div>
+        <!-- <button type="submit">제출</button> -->
+        <button type="button">제출</button>
+    </form>
+
+    <script>
+        // 카카오 공용 api 요청
+        async function kakaoAPI(url, data) {
+            try {
+                const REST_API_KEY = 'ec4598a1a965774fe72c122f72c1d857';
+                let response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `KakaoAK ${REST_API_KEY}`
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                response = response.json(); // JSON 데이터로 응답을 파싱합니다.
+                return response;
+
+            } catch (error) {
+                console.error('Error:', error);
+                throw error;
+            }
+        };
+
+        // A kitty with black fur
+        // sleeping cat, dog, human, ugly face, cropped
+        function karloInit() {
+            const karlo_url = "https://api.kakaobrain.com/v2/inference/karlo/t2i";
+            const karlo_data = {
+                prompt: "",
+                negative_prompt: "",
+                return_type: "base64_string",
+                samples: 1,//1 ~ 8개 결과
+            }
+            const tar = document.querySelector('.karlo_wrap');
+            if (tar) {
+                tar.querySelector('button').addEventListener('click', async () => {
+                    karlo_data.prompt = tar.querySelector('#inp1').value;
+                    karlo_data.negative_prompt = tar.querySelector('#inp2').value || "";
+                    let response = await kakaoAPI(karlo_url, karlo_data);
+                    console.log(response);
+                    let arr = [];
+
+                    response.images.forEach(i => {
+                        arr.push(i.image)
+                    })
+
+                    for (let i = 0; i < arr.length; i++) {
+                        let newImg = document.createElement("img");
+                        newImg.src = `data:image/;base64,${arr[i]}`;
+                        newImg.alt = `${karlo_data.prompt} - ${i}`;
+                        document.body.append(newImg);
+                    };
+                });
+            };
+        };
+        karloInit();
+
+        // 코GPT api
+        async function kogptInit() {
+            const kogpt_url = "https://api.kakaobrain.com/v1/inference/kogpt/generation";
+            const kogpt_data = {
+                prompt: 1,
+                max_tokens: 1,
+                temperature: 1.0,
+                top_p: 1.0,
+                n: 1
+            }
+
+            // KoGPT에게 전달할 명령어 구성
+            const inp_prompt = `인간처럼 생각하고, 행동하는 '지능'을 통해 인류가 이제까지 풀지 못했던`;
+            kogpt_data.prompt = inp_prompt;
+            kogpt_data.max_tokens = 32;
+            // kogpt_data.temperature = 1.0;
+            // kogpt_data.top_p = 1.0;
+            kogpt_data.n = 3;
+            let response = await kakaoAPI(kogpt_url, kogpt_data);
+            console.log(response);
+        }
+        kogptInit();
+
+        // const url = 'https://api.kakaobrain.com/v1/inference/kogpt/generation';
+        // const REST_API_KEY = 'ec4598a1a965774fe72c122f72c1d857';
+
+        // const kogpt_data = {
+        //     max_tokens: 16,
+        //     temperature: 1,
+        //     top_p: 1,
+        //     n: 1,
+        //     prompt: inp_prompt,
+        // };
+
+        // fetch(url, {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Authorization': 'KakaoAK ' + REST_API_KEY,
+        //     },
+        //     // credentials: 'include', 'omit'
+        //     // credentials: 'omit',
+        //     // mode: 'cors', // no-cors, *cors, same-origin
+        //     mode: 'no-cors',
+        //     body: JSON.stringify(kogpt_data),
+        // }
+        //     .then(response => response.json())
+        //     .then(responseData => {
+        //         console.log(responseData);
+        //     })
+        // );
+
+
+    </script>
+</body>
+
+</html>
