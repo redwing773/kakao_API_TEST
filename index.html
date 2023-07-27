@@ -36,12 +36,47 @@
             <!-- <button type="submit">제출</button> -->
             <button type="button">제출</button>
         </form>
-        <p>이게 계속 안되서 서버하나 띄워서 거기서 api를 해야 되는 건가?
+        <!-- <p>이게 계속 안되서 서버하나 띄워서 거기서 api를 해야 되는 건가?
             <a href="https://selosele.github.io/2020/11/23/nodejs-create-webserver/" target="_blank">참고 사이트</a>
-        </p>
+        </p> -->
     </div>
 
+    <div>
+        <div>
+            <button type="button" onclick="test_request()">테스트요청</button>
+            <!-- <button type="button" onclick="karlo_request()">카를로 요청</button> -->
+        </div>
+    </div>
+
+    
+
     <script>
+        // async function karlo_request(){
+        //     let response = await fetch('http://localhost:3300/karlo').then(response => response.text());
+        //     response = JSON.parse(response);
+        //     console.log(response);
+        //     // debugger;
+        //     let arr = [];
+        //     response.images.forEach(i => {
+        //         arr.push(i.image)
+        //     })
+        //     console.log(arr);
+        //     for (let i = 0; i < arr.length; i++) {
+        //         let newImg = document.createElement("img");
+        //         newImg.src = `data:image/;base64,${arr[i]}`;
+        //         // newImg.alt = `${karlo_data.prompt} - ${i}`;
+        //         document.querySelector('.karlo_wrap').append(newImg);
+        //     };
+        // }
+
+
+        async function test_request(){
+            let response = await fetch('http://localhost:3300/ttest').then(response => response.text());
+            response = JSON.parse(response);
+            console.log(response.msg);
+        }
+
+
         // 카카오 공용 api 요청
         async function kakaoAPI(url, data, nocors) {
             try {
@@ -66,8 +101,6 @@
             }
         };
 
-        // A kitty with black fur
-        // sleeping cat, dog, human, ugly face, cropped
         function karloInit() {
             const karlo_url = "https://api.kakaobrain.com/v2/inference/karlo/t2i";
             const karlo_data = {
@@ -99,7 +132,35 @@
                 });
             };
         };
-        karloInit();
+        // karloInit();
+
+        async function karlo_request(){
+            const tar = document.querySelector('.karlo_wrap');
+            if (tar) {
+                tar.querySelector('button').addEventListener('click', async () => {
+                    const karlo_data = {};
+                    karlo_data.prompt = tar.querySelector('#inp1').value == "" ? "fire" : tar.querySelector('#inp1').value;
+                    karlo_data.negative_prompt = tar.querySelector('#inp2').value;
+                    let response = await fetch('http://localhost:3300/karlo')
+                    .then(response => response.text());
+                    response = JSON.parse(response);
+                    console.log(response);
+                    // debugger;
+                    let arr = [];
+                    response.images.forEach(i => {
+                        arr.push(i.image)
+                    })
+                    console.log(arr);
+                    for (let i = 0; i < arr.length; i++) {
+                        let newImg = document.createElement("img");
+                        newImg.src = `data:image/;base64,${arr[i]}`;
+                        // newImg.alt = `${karlo_data.prompt} - ${i}`;
+                        document.querySelector('.karlo_wrap').append(newImg);
+                    };
+                });
+            }
+        }
+        karlo_request()
 
         // 코GPT api
         async function kogptInit() {
