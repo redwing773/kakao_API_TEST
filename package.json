@@ -18,5 +18,8 @@
   "homepage": "https://github.com/redwing773/kakao_API_TEST#readme",
   "dependencies": {
     "express-generator": "^4.16.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1"
   }
 }

@@ -1,26 +1,40 @@
+// import { app } from '../app.js';
 var express = require('express');
 var router = express.Router();
+
+console.log(app);
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
     res.render('index', { title: 'Express' });
 });
 
-router.get('/ttest', function (req, res, next) {
+router.post('/ttest', function (req, res, next) {
     res.setHeader('Access-Control-Allow-origin', '*');
-    res.setHeader('Access-Control-Allow-Credentials', 'true'); // 쿠키 주고받기 허용
+    // res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "*");
+    res.setHeader("Access-Control-Max-Age", "3600");
+    res.setHeader("Access-Control-Allow-Headers",
+        "*,Origin, X-Requested-With, Content-Type, Accept, Authorization");
+
+
+    // res.writeHead(200, { 'Access-Control-Allow-Origin': '*' });
+    // res.setHeader('Access-Control-Allow-Credentials', 'true'); // 쿠키 주고받기 허용
+    console.log(req.body);
     const data = {
-        msg : 'hi',
+        msg: 'hi',
     }
+    // console.log(json(data));
     res.status(200).json(data);
     // res.json(data);
 });
 
-router.get('/karlo', async (req, res, next) => {
-    res.setHeader('Access-Control-Allow-origin', '*');
-    res.setHeader('Access-Control-Allow-Credentials', 'true'); // 쿠키 주고받기 허용
+router.post('/karlo', async (req, res, next) => {
+    // res.setHeader('Access-Control-Allow-origin', '*');
+    // res.setHeader('Access-Control-Allow-Credentials', 'true'); // 쿠키 주고받기 허용
 
-    console.log(req);
+    console.log(req.body);
     // 카카오 공용 api 요청
     async function kakaoAPI(url, data, nocors) {
         try {
@@ -69,7 +83,7 @@ router.get('/karlo', async (req, res, next) => {
         res.status(200).json(response);
 
     })
-    
+
     // console.log(ress);
 
     // // 코GPT api
@@ -105,7 +119,7 @@ router.get('/karlo', async (req, res, next) => {
     // }
     // kogptInit();
 
-    
+
 });
 
 module.exports = router;
